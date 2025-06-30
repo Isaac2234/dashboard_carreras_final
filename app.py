@@ -18,8 +18,16 @@ def fast_sammon(X, n_components=2):
 
 
 def pca(X, n_components=2):
-    pca = PCA(n_components=n_components)
-    return pca.fit_transform(X)
+    X_meaned = X - np.mean(X, axis=0)
+    cov_mat = np.cov(X_meaned, rowvar=False)
+    eig_vals, eig_vecs = np.linalg.eigh(cov_mat)
+    sorted_idx = np.argsort(eig_vals)[::-1]
+    eig_vecs = eig_vecs[:, sorted_idx]
+    eig_vals = eig_vals[sorted_idx]
+    eig_vecs = eig_vecs[:, :n_components]
+    X_reduced = np.dot(X_meaned, eig_vecs)
+    return X_reduced
+
 
 # Optimización: MDS con preprocesamiento
 
